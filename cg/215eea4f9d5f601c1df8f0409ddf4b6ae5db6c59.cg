@@ -1,0 +1,7 @@
+struct PS_IN {
+    float4 Color : COLOR0;
+};
+
+float4 main(in PS_IN In) {
+    return In.Color;
+}

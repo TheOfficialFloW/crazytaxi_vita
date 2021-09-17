@@ -1,0 +1,14 @@
+struct PS_IN {
+    float2 UV : TEXCOORD0;
+    float4 Color : COLOR0;
+};
+
+uniform float4 psShaderParam;
+
+float4 main(in PS_IN In) {
+    float4 vOutColor;
+
+    vOutColor = In.Color;
+    vOutColor.w  *= psShaderParam.z ;
+    return vOutColor;
+}

@@ -1,0 +1,14 @@
+struct PS_IN {
+    float2 UV : TEXCOORD0;
+    float4 Color : COLOR0;
+};
+
+uniform sampler2D g_Tex;
+uniform float4 psShaderParam;
+
+float4 main(in PS_IN In) {
+    float4 texColor;
+
+    texColor = tex2D(g_Tex, In.UV.xy );
+    return float4(texColor.xyz , (In.Color.w  * psShaderParam.z ));
+}

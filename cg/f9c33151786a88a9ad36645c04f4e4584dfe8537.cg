@@ -1,0 +1,22 @@
+struct VS_OUT {
+    float4 Pos : POSITION;
+    float4 Color : COLOR0;
+    float2 UV : TEXCOORD0;
+};
+
+struct VS_IN {
+    float3 Pos;
+    float4 Color;
+    float2 UV;
+};
+
+uniform float4x4 matUiProj;
+
+VS_OUT main(in VS_IN In) {
+    VS_OUT Out;
+
+    Out.Pos = (mul(matUiProj, float4(In.Pos, 1.0)));
+    Out.Color = In.Color;
+    Out.UV = In.UV;
+    return Out;
+}

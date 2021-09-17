@@ -1,0 +1,9 @@
+struct PS_IN {
+    float2 UV : TEXCOORD0;
+};
+
+uniform sampler2D g_Tex;
+
+float4 main(in PS_IN In) {
+    return tex2D(g_Tex, In.UV);
+}

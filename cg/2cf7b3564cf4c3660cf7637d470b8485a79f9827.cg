@@ -1,0 +1,19 @@
+struct VS_OUT {
+    float4 Pos : POSITION;
+    float4 Color : COLOR0;
+};
+
+struct VS_IN {
+    float3 Pos;
+};
+
+uniform float4x4 matWorldViewProj;
+uniform float4 vDiffuseColor;
+
+VS_OUT main(in VS_IN In) {
+    VS_OUT Out;
+
+    Out.Pos = (mul(matWorldViewProj, float4(In.Pos, 1.0)));
+    Out.Color = vDiffuseColor;
+    return Out;
+}

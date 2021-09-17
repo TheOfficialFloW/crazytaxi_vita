@@ -1,0 +1,38 @@
+struct VS_OUT {
+    float4 Pos : POSITION;
+    float2 UV : TEXCOORD0;
+    float4 Color : COLOR0;
+};
+
+struct VS_IN {
+    float3 Pos;
+    float3 Normal;
+    float4 Color;
+    float2 UV;
+};
+
+uniform float4x4 matWorld;
+uniform float4x4 matWorldViewProj;
+uniform float4 vDiffuseColor;
+uniform float4 vLightAmbient;
+uniform float4 vLightDirection;
+uniform float4 vMaterialAmbient;
+uniform float4 vMaterialDiffuse;
+uniform float4 vsShaderParam;
+
+VS_OUT main(in VS_IN In) {
+    float4 pos;
+    VS_OUT Out;
+    float3 vNormal;
+    float n_dot_l;
+    float coefficient;
+    float3 I;
+
+    pos = float4(In.Pos, 1.0);
+    Out.Pos = (mul(matWorldViewProj, pos));
+    Out.Pos.z  -= vsShaderParam.w ;
+    Out.UV = In.UV;
+    
+    Out.Color = ((float(vsShaderParam.x)) > 0.5) ? (float4((saturate(((vMaterialAmbient.xyz  * vLightAmbient.xyz ) + (vMaterialDiffuse.xyz  * max(0.0, dot(normalize((mul(float3x3(matWorld), In.Normal))), vLightDirection.xyz )))))), 1.0) * vMaterialDiffuse) : ((float(vsShaderParam.z ) * vDiffuseColor) + ((1.0 - float(vsShaderParam.z )) * In.Color));
+    return Out;
+}

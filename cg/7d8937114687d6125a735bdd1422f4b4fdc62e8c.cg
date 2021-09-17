@@ -1,0 +1,14 @@
+struct PS_IN {
+    float4 Color : COLOR0;
+    float2 UV : TEXCOORD0;
+};
+
+uniform sampler2D g_Tex;
+uniform float4 spriteParam;
+
+float4 main(in PS_IN In) {
+    float4 tex;
+
+    tex = tex2D(g_Tex, In.UV);
+    return (((spriteParam.x  * tex) + (1.0 - spriteParam.x )) * In.Color);
+}
