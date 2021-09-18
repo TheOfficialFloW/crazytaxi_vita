@@ -9,6 +9,7 @@
 #define MEMORY_VITAGL_THRESHOLD_MB 8
 
 #define DATA_PATH "ux0:data/crazytaxi"
+#define CG_PATH "app0:cg"
 
 #define SCREEN_W 960
 #define SCREEN_H 544

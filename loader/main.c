@@ -392,7 +392,7 @@ void glShaderSourceHook(GLuint shader, GLsizei count, const GLchar **string, con
   snprintf(sha_name, sizeof(sha_name), "%08x%08x%08x%08x%08x", sha1[0], sha1[1], sha1[2], sha1[3], sha1[4]);
 
   char cg_path[128];
-  snprintf(cg_path, sizeof(cg_path), "%s/%s.cg", DATA_PATH "/cg", sha_name);
+  snprintf(cg_path, sizeof(cg_path), "%s/%s.cg", CG_PATH, sha_name);
 
   FILE *file = fopen(cg_path, "rb");
   fseek(file, 0, SEEK_END);
