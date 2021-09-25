@@ -16,7 +16,7 @@ VS_OUT main(in VS_IN In) {
     VS_OUT Out;
 
     Out.Pos = (mul(matUiProj, float4(In.Pos, 1.0)));
-    Out.Color = In.Color;
+    Out.Color = In.Color.zyxw;
     Out.UV = In.UV;
     return Out;
 }
