@@ -8,7 +8,11 @@ uniform float4 psShaderParam;
 float4 main(in PS_IN In) {
     float4 vOutColor;
 
-    vOutColor = In.Color;
+    // This fixes Pizza Hut logo color however bugs out KFC text. Lesser evil...
+    if (In.Color.b > 0.7f)
+      vOutColor = In.Color.zyxw;
+    else
+      vOutColor = In.Color;
     vOutColor.w  *= psShaderParam.z ;
     return vOutColor;
 }

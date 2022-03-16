@@ -287,7 +287,7 @@ void putGameUI(float x, float y, float x_scale, float y_scale, float tex_x, floa
   s.unk2 = 0;
   s.unk3 = 1.0f;
   *(&s.unk4 + 1) = 5;
-  memset(s.reserved, 0, sizeof(int64_t) * 6);
+  sceClibMemset(s.reserved, 0, sizeof(int64_t) * 6);
   nlSprPut(&s);
 }
 
@@ -300,6 +300,595 @@ void taxi_game_update(void *a1) {
 
 extern void *__cxa_guard_acquire;
 extern void *__cxa_guard_release;
+
+// Original locations names
+const char *PizzaHutStr = "Pizza Hut";
+const char *KFCStr = "Kentucky Fried Chicken";
+const char *FILAStr = "FILA";
+const char *LeviStr = "The Original Levi's\x7E store";
+const char *TowerStr = "Tower Records";
+
+int MendReplaceTex(int a1) {
+  int NLS = (int *)(crazytaxi_mod.text_base + 0x0081B15C);
+  return *(int *)(NLS + 44 * a1 + 16);
+}
+
+int MendChangeZBias(int a1, int *a2, int *a3) {
+  int v3, v4, v5, v6, v7, v8, v9, result;
+  int CourseMode = *(int *)(crazytaxi_mod.text_base + 0x0078B7DC);
+  int s_uSaxA = *(int *)(crazytaxi_mod.text_base + 0x007DE668);
+  int s_uShinobiDoor = *(int *)(crazytaxi_mod.text_base + 0x007DE664);
+  
+  // Fix for Pizza Hut text not showing
+  if (a1== 0xCC0B3A0 || a1 == 0xCBFDF60) {
+    v5 = *a3 + 9;
+    goto LABEL_277;
+  }
+  
+  if ( CourseMode == 2 )
+  {
+    if ( a1 > 213406111 )
+    {
+      if ( a1 > 213697759 )
+      {
+        if ( a1 <= 213813599 )
+        {
+          if ( a1 != 213697760 && a1 != 213708032 )
+            goto LABEL_278;
+          goto LABEL_276;
+        }
+        if ( a1 != 214424416 && a1 != 213813600 )
+          goto LABEL_278;
+        goto LABEL_257;
+      }
+      if ( a1 > 213449951 )
+      {
+        if ( a1 == 213449952 )
+        {
+          v5 = 102;
+        }
+        else
+        {
+          if ( a1 != 213549984 )
+            goto LABEL_278;
+          v5 = -10;
+        }
+        goto LABEL_277;
+      }
+      if ( a1 != 213406112 )
+      {
+        if ( a1 == 213410176 )
+          goto LABEL_276;
+        goto LABEL_278;
+      }
+      goto LABEL_193;
+    }
+    if ( a1 <= 213302623 )
+    {
+      if ( a1 > 213205311 )
+      {
+        if ( a1 != 213205312 && a1 != 213207360 )
+          goto LABEL_278;
+        goto LABEL_276;
+      }
+      if ( a1 == 213138848 )
+        goto LABEL_257;
+      if ( a1 == 213203264 )
+        goto LABEL_276;
+      goto LABEL_278;
+    }
+    if ( a1 > 213343039 )
+    {
+      if ( a1 == 213343040 )
+        goto LABEL_276;
+      if ( a1 != 213399264 )
+        goto LABEL_278;
+      goto LABEL_193;
+    }
+    if ( a1 == 213302624 )
+      goto LABEL_257;
+    goto LABEL_192;
+  }
+  if ( CourseMode != 1 )
+  {
+    if ( CourseMode )
+      goto LABEL_278;
+    if ( a1 > 213796031 )
+    {
+      if ( a1 <= 214026751 )
+      {
+        if ( a1 > 213949311 )
+        {
+          if ( a1 > 213986303 )
+          {
+            if ( a1 > 213993151 )
+            {
+              v3 = a1 == 213993152;
+              if ( a1 != 213993152 )
+                v3 = a1 == 213996576;
+              if ( !v3 )
+              {
+                if ( a1 != 214000000 )
+                  goto LABEL_278;
+                goto LABEL_275;
+              }
+              goto LABEL_276;
+            }
+            if ( a1 != 213986304 && a1 != 213989728 )
+              goto LABEL_278;
+            goto LABEL_257;
+          }
+          if ( a1 <= 213979455 )
+          {
+            if ( a1 != 213949312 )
+            {
+              if ( a1 == 213972608 )
+                goto LABEL_276;
+              goto LABEL_278;
+            }
+            goto LABEL_257;
+          }
+          if ( a1 == 213979456 )
+            goto LABEL_276;
+          if ( a1 != 213982880 )
+            goto LABEL_278;
+LABEL_275:
+          v5 = *a3 + 6;
+          goto LABEL_277;
+        }
+        if ( a1 <= 213905599 )
+        {
+          if ( a1 > 213902175 )
+          {
+            if ( a1 == 213902176 )
+              goto LABEL_276;
+            if ( a1 != 213905408 )
+              goto LABEL_278;
+            goto LABEL_257;
+          }
+          if ( a1 == 213796032 )
+            goto LABEL_257;
+          if ( a1 == 213895328 )
+            goto LABEL_276;
+          goto LABEL_278;
+        }
+        if ( a1 <= 213942463 )
+        {
+          if ( a1 == 213905600 )
+            goto LABEL_276;
+          if ( a1 != 213939040 )
+            goto LABEL_278;
+          goto LABEL_275;
+        }
+        if ( a1 != 213942464 && a1 != 213945888 )
+          goto LABEL_278;
+        goto LABEL_193;
+      }
+      if ( a1 <= 214200831 )
+      {
+        if ( a1 <= 214140479 )
+        {
+          if ( a1 > 214083615 )
+          {
+            if ( a1 == 214083616 )
+              goto LABEL_276;
+            if ( a1 != 214087040 )
+              goto LABEL_278;
+            goto LABEL_257;
+          }
+          if ( a1 == 214026752 )
+            goto LABEL_257;
+          if ( a1 == 214039776 )
+            goto LABEL_276;
+          goto LABEL_278;
+        }
+        if ( a1 <= 214183711 )
+        {
+          if ( a1 != 214140480 && a1 != 214154912 )
+            goto LABEL_278;
+          goto LABEL_257;
+        }
+        if ( a1 == 214183712 )
+          goto LABEL_276;
+        if ( a1 != 214190560 )
+          goto LABEL_278;
+        goto LABEL_193;
+      }
+      if ( a1 <= 214233759 )
+      {
+        if ( a1 > 214223487 )
+        {
+          if ( a1 != 214223488 && a1 != 214226912 )
+            goto LABEL_278;
+        }
+        else if ( a1 != 214200832 )
+        {
+          if ( a1 != 214213184 )
+            goto LABEL_278;
+          v5 = 2;
+          goto LABEL_277;
+        }
+        goto LABEL_276;
+      }
+      if ( a1 <= 214278335 )
+      {
+        if ( a1 == 214233760 )
+          goto LABEL_276;
+        if ( a1 != 214240608 )
+          goto LABEL_278;
+        goto LABEL_257;
+      }
+      if ( a1 == 214278336 )
+        goto LABEL_257;
+      goto LABEL_135;
+    }
+    if ( a1 > 213495135 )
+    {
+      if ( a1 <= 213604927 )
+      {
+        if ( a1 <= 213576031 )
+        {
+          if ( a1 > 213508159 )
+          {
+            if ( a1 == 213508160 )
+              goto LABEL_276;
+            if ( a1 != 213556832 )
+              goto LABEL_278;
+          }
+          else if ( a1 != 213495136 )
+          {
+            if ( a1 != 213504736 )
+              goto LABEL_278;
+            v5 = *a3 + 2;
+            goto LABEL_277;
+          }
+          goto LABEL_257;
+        }
+        if ( a1 <= 213589727 )
+        {
+          if ( a1 != 213576032 && a1 != 213582880 )
+            goto LABEL_278;
+          goto LABEL_276;
+        }
+        if ( a1 != 213589728 && a1 != 213593152 )
+          goto LABEL_278;
+        goto LABEL_275;
+      }
+      if ( a1 > 213693919 )
+      {
+        if ( a1 <= 213742527 )
+        {
+          if ( a1 != 213693920 && a1 != 213728160 )
+            goto LABEL_278;
+          goto LABEL_257;
+        }
+        v4 = a1 == 213742528;
+        if ( a1 != 213742528 )
+          v4 = a1 == 213756224;
+        if ( !v4 )
+        {
+          if ( a1 == 213780256 )
+            goto LABEL_276;
+          goto LABEL_278;
+        }
+LABEL_257:
+        v5 = *a3 + 3;
+        goto LABEL_277;
+      }
+      if ( a1 <= 213665791 )
+      {
+        if ( a1 != 213604928 && a1 != 213653440 )
+          goto LABEL_278;
+        goto LABEL_276;
+      }
+      if ( a1 != 213665792 )
+      {
+        if ( a1 != 213690496 )
+          goto LABEL_278;
+        goto LABEL_257;
+      }
+LABEL_276:
+      v5 = 1;
+      goto LABEL_277;
+    }
+    if ( a1 <= 213324959 )
+    {
+      if ( a1 <= 213286559 )
+      {
+        if ( a1 > 213239967 )
+        {
+          if ( a1 != 213239968 && a1 != 213257824 )
+            goto LABEL_278;
+          goto LABEL_257;
+        }
+        if ( a1 == 213132000 )
+          goto LABEL_257;
+        if ( a1 != 213236544 )
+          goto LABEL_278;
+        goto LABEL_193;
+      }
+      if ( a1 > 213320863 )
+      {
+        if ( a1 != 213320864 && a1 != 213322912 )
+          goto LABEL_278;
+        goto LABEL_276;
+      }
+      if ( a1 == 213286560 )
+        goto LABEL_276;
+LABEL_192:
+      if ( a1 != 213308928 )
+        goto LABEL_278;
+      goto LABEL_193;
+    }
+    if ( a1 <= 213410175 )
+    {
+      if ( a1 <= 213341631 )
+      {
+        if ( a1 != 213324960 && a1 != 213329760 )
+          goto LABEL_278;
+        goto LABEL_276;
+      }
+      if ( a1 == 213341632 )
+        goto LABEL_276;
+      if ( a1 != 213350560 )
+        goto LABEL_278;
+LABEL_193:
+      v5 = *a3 + 9;
+LABEL_277:
+      *a3 = v5;
+      goto LABEL_278;
+    }
+    if ( a1 > 213432767 )
+    {
+      if ( a1 == 213432768 )
+        goto LABEL_276;
+      if ( a1 != 213444448 )
+        goto LABEL_278;
+      goto LABEL_275;
+    }
+    if ( a1 != 213410176 )
+    {
+      if ( a1 == 213429344 )
+        goto LABEL_276;
+      goto LABEL_278;
+    }
+LABEL_227:
+    v5 = 101;
+    goto LABEL_277;
+  }
+  if ( a1 <= 213834623 )
+  {
+    if ( a1 > 213468639 )
+    {
+      if ( a1 <= 213665791 )
+      {
+        if ( a1 <= 213530335 )
+        {
+          if ( a1 == 213468640 )
+            goto LABEL_276;
+          if ( a1 != 213476896 )
+          {
+            if ( a1 == 213517312 )
+              goto LABEL_276;
+            goto LABEL_278;
+          }
+          goto LABEL_275;
+        }
+        if ( a1 > 213618751 )
+        {
+          if ( a1 != 213618752 && a1 != 213659168 )
+            goto LABEL_278;
+          goto LABEL_276;
+        }
+        if ( a1 != 213530336 )
+        {
+          if ( a1 == 213544032 )
+            goto LABEL_276;
+          goto LABEL_278;
+        }
+        goto LABEL_227;
+      }
+      if ( a1 <= 213791455 )
+      {
+        if ( a1 == 213665792 )
+          goto LABEL_276;
+        if ( a1 != 213693920 )
+        {
+          if ( a1 == 213718112 )
+            goto LABEL_276;
+          goto LABEL_278;
+        }
+        goto LABEL_257;
+      }
+      if ( a1 <= 213824351 )
+      {
+        if ( a1 != 213791456 && a1 != 213814080 )
+          goto LABEL_278;
+        goto LABEL_257;
+      }
+      if ( a1 == 213824352 )
+        goto LABEL_276;
+      if ( a1 != 213827776 )
+        goto LABEL_278;
+    }
+    else
+    {
+      if ( a1 > 213288831 )
+      {
+        if ( a1 > 213311455 )
+        {
+          if ( a1 <= 213363583 )
+          {
+            if ( a1 != 213311456 && a1 != 213361536 )
+              goto LABEL_278;
+            goto LABEL_276;
+          }
+          if ( a1 != 213363584 )
+          {
+            if ( a1 != 213452896 )
+              goto LABEL_278;
+            goto LABEL_257;
+          }
+          goto LABEL_276;
+        }
+        if ( a1 == 213288832 || a1 == 213305280 )
+          goto LABEL_276;
+        goto LABEL_192;
+      }
+      if ( a1 <= 213182559 )
+      {
+        if ( a1 != 213172960 )
+        {
+          if ( a1 == 213175712 || a1 == 213179136 )
+          {
+            v6 = *a3;
+            if ( !(s_uSaxA << 31) )
+              v6 += 3;
+            *a3 = v6;
+            s_uSaxA ^= 1u;
+          }
+          goto LABEL_278;
+        }
+        goto LABEL_257;
+      }
+      if ( a1 > 213225087 )
+      {
+        if ( a1 == 213225088 )
+          goto LABEL_275;
+        if ( a1 != 213276832 )
+          goto LABEL_278;
+        goto LABEL_193;
+      }
+      if ( a1 == 213182560 )
+        goto LABEL_276;
+      if ( a1 != 213190080 )
+        goto LABEL_278;
+    }
+    v5 = 3;
+    goto LABEL_277;
+  }
+  if ( a1 <= 213986111 )
+  {
+    if ( a1 > 213911423 )
+    {
+      if ( a1 <= 213935391 )
+      {
+        v9 = a1 == 213911424;
+        if ( a1 != 213911424 )
+          v9 = a1 == 213928544;
+        if ( !v9 && a1 != 213931968 )
+          goto LABEL_278;
+        goto LABEL_257;
+      }
+      if ( a1 > 213972415 )
+      {
+        if ( a1 != 213972416 )
+        {
+          if ( a1 == 213979264 )
+          {
+            *a3 = 1;s_uShinobiDoor & 1;
+            s_uShinobiDoor ^= 1u;
+          }
+          goto LABEL_278;
+        }
+        goto LABEL_257;
+      }
+      if ( a1 == 213935392 )
+        goto LABEL_276;
+      if ( a1 == 213945664 )
+        goto LABEL_257;
+      goto LABEL_278;
+    }
+    if ( a1 <= 213888127 )
+    {
+      v7 = a1 == 213834624;
+      if ( a1 != 213834624 )
+        v7 = a1 == 213851072;
+      if ( v7 )
+        goto LABEL_257;
+      if ( a1 != 213884704 )
+        goto LABEL_278;
+      goto LABEL_275;
+    }
+    if ( a1 > 213894975 )
+    {
+      if ( a1 != 213894976 )
+      {
+        if ( a1 == 213902176 )
+          goto LABEL_276;
+        goto LABEL_278;
+      }
+      goto LABEL_257;
+    }
+    if ( a1 != 213888128 && a1 != 213891552 )
+      goto LABEL_278;
+    goto LABEL_193;
+  }
+  if ( a1 <= 214091647 )
+  {
+    if ( a1 <= 214036127 )
+    {
+      v8 = a1 == 213986112;
+      if ( a1 != 213986112 )
+        v8 = a1 == 214009408;
+      if ( v8 )
+        goto LABEL_276;
+      if ( a1 != 214029952 )
+        goto LABEL_278;
+      goto LABEL_257;
+    }
+    if ( a1 <= 214046399 )
+    {
+      if ( a1 != 214036128 && a1 != 214039552 )
+        goto LABEL_278;
+      goto LABEL_276;
+    }
+    if ( a1 != 214046400 )
+    {
+      if ( a1 != 214077216 )
+        goto LABEL_278;
+      goto LABEL_257;
+    }
+    goto LABEL_276;
+  }
+  if ( a1 > 214183487 )
+  {
+    if ( a1 <= 214424415 )
+    {
+      if ( a1 != 214183488 && a1 != 214216832 )
+        goto LABEL_278;
+      goto LABEL_257;
+    }
+LABEL_135:
+    if ( a1 == 214424416 )
+      goto LABEL_257;
+    if ( a1 != 220822528 )
+      goto LABEL_278;
+    goto LABEL_193;
+  }
+  if ( a1 > 214130015 )
+  {
+    if ( a1 != 214130016 )
+    {
+      if ( a1 != 214133440 )
+        goto LABEL_278;
+      goto LABEL_257;
+    }
+    goto LABEL_275;
+  }
+  if ( a1 == 214091648 )
+    goto LABEL_257;
+  if ( a1 == 214109472 )
+    goto LABEL_276;
+LABEL_278:
+  result = 0xC627F40;
+  if ( a2 == (int *)0xC627F40 )
+  {
+    result = 0;
+    *a3 = 0;
+  }
+  return result;
+}
 
 void patch_game(void) {
   hook_addr(so_symbol(&crazytaxi_mod, "__cxa_guard_acquire"), (uintptr_t)&__cxa_guard_acquire);
@@ -315,6 +904,34 @@ void patch_game(void) {
   // Nuke touch widgets
   nlSprPut = (void *)so_symbol(&crazytaxi_mod, "nlSprPut");
   hook_addr(so_symbol(&crazytaxi_mod, "_Z9putGameUIffffffff"), (uintptr_t)&putGameUI);
+
+  // Restore original location names
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F354C), &PizzaHutStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B4), &PizzaHutStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3564), &KFCStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35C4), &KFCStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3558), &FILAStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B8), &FILAStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F355C), &LeviStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35BC), &LeviStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3560), &TowerStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35C0), &TowerStr, 4);
+  
+  // Restoring FILA as possible destination
+  uint16_t instr = 0xE04F; // B #0xa2
+  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F8130), &instr, 2);
+  
+  // Restore Pizza Hut and FILA models
+  hook_addr(so_symbol(&crazytaxi_mod, "_Z10MendNoDrawiRbfRiPf"), (uintptr_t)&ret0);
+  
+  // Restore original brands textures
+  hook_addr(so_symbol(&crazytaxi_mod, "_Z14MendReplaceTexi"), (uintptr_t)&MendReplaceTex);
+  
+  // Restore original landsmark previews
+  hook_addr(so_symbol(&crazytaxi_mod, "_Z20MendReplaceTexReloadi"), (uintptr_t)&ret0);
+  
+  // Fix Pizza Hut text not showing up
+  hook_addr(so_symbol(&crazytaxi_mod, "_Z15MendChangeZBiasiPiRi"), (uintptr_t)&MendChangeZBias);
 }
 
 extern void *__cxa_atexit;
