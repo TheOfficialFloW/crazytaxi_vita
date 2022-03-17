@@ -62,7 +62,7 @@ Additionally, you'll need these libraries to be compiled as well with `-mfloat-a
 
   - ````bash
     cd libopensles
-    make install
+    make CRAZY_TAXI=1 install
     ````
 Finally, you'll need thi library recompiled with `-mfloat-abi=softfp` from [vitasdk/packages](https://github.com/vitasdk/packages):
 - sndfile
@@ -79,4 +79,5 @@ You can also use [vitasdk/vitasdk-softfp](https://hub.docker.com/r/vitasdk/vitas
 ## Credits
 
 - Rinnegatamante for vitaGL and fixes.
+- Silent for helping with contents restorations.
 - Once13One for providing LiveArea assets.
