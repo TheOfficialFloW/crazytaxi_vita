@@ -264,6 +264,8 @@ typedef struct {
 } NaomiSprite;
 
 static int (* nlSprPut)(NaomiSprite *sprite);
+static int (* Voice_ShutUp)(int id);
+static int (* Voice_Request)(int a1, int a2, int64_t a3);
 
 void putGameUI(float x, float y, float x_scale, float y_scale, float tex_x, float tex_y, float w, float h) {
   if (w != 170.0f)
@@ -890,6 +892,93 @@ LABEL_278:
   return result;
 }
 
+#define LOC(x) (int *)(crazytaxi_mod.text_base + x)
+uint32_t Chat_TellDestination(int *a1) {
+  int Game_No = *LOC(0x78B7E4);
+  int TaxiDriver = *LOC(0x7D77EC);
+  int *voice_table = (int *)LOC(0x608E80);
+  int *voice_table2 = (int *)LOC(0x608BEC);
+  int *voice_out = LOC(0x7D7750);
+  
+  int v3, v4, v6, v8;
+  int *v5;
+  int8_t *v7;
+
+  switch (Game_No) {
+  case 2:
+    voice_out[0] = voice_table[(a1[82] & 7) + 5 * *LOC(0x7D771C)];
+    *LOC(0x7D771C) = (*LOC(0x7D771C) + 1) % 5;
+    break;
+  case 1:
+    switch (a1[80]) {
+    case 1:
+      v6 = voice_table2[(a1[82] & 7) + 40];
+      break;
+    case 2:
+      v6 = voice_table2[(a1[82] & 7) + 55];
+      break;
+    case 3:
+      v6 = voice_table2[(a1[82] & 7) + 60];
+      break;
+    case 4:
+      v6 = voice_table2[(a1[82] & 7) + 65];
+      break;
+    case 5:
+      v6 = voice_table2[(a1[82] & 7) + 70];
+      break;
+    case 13:
+      v6 = voice_table2[(a1[82] & 7) + 95];
+      break;
+    case 15:
+      v6 = voice_table2[(a1[82] & 7) + 110];
+      break;
+    case 16:
+      v6 = voice_table2[(a1[82] & 7) + 35];
+      break;
+    case 17:
+      v6 = voice_table2[(a1[82] & 7) + 45];
+      break;
+    case 18:
+      v6 = voice_table2[(a1[82] & 7) + 150];
+      break;
+    case 22:
+      v6 = voice_table2[(a1[82] & 7) + 130];
+      break;
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+    case 27:
+      v6 = voice_table2[(a1[82] & 7) + 85];
+      break;
+    default:
+      v4 = a1[82] & 7;
+      v3 = 5 * *LOC(0x7D771C);
+      v5 = voice_table;
+      v6 = v5[v3 + v4];
+      break;
+    }
+    break;
+  case 0:
+    v3 = 5 * a1[80];
+    v4 = a1[82] & 7;
+    v5 = voice_table2;
+    v6 = v5[v3 + v4];
+    break;
+  }
+  voice_out[0] = v6;
+  voice_out[1] = 2;
+  voice_out[2] = 0x7FFFFFFF;
+  v7 = (int8_t *)(crazytaxi_mod.text_base + 0x608B5C) + 12 * (*LOC(0x7D7714) % 3 + 3 * TaxiDriver);
+  v8 = *(int64_t *)(v7 - 36);
+  *LOC(0x7D7770) = *((int32_t *)v7 - 7);
+  *(int64_t *)(crazytaxi_mod.text_base + 0x7D7768) = v8;
+  Voice_ShutUp(1);
+  Voice_Request((int)(crazytaxi_mod.text_base + 0x7D7768), 1, 127);
+  Voice_ShutUp(2);
+  return Voice_Request(voice_out, 2, 127);
+}
+
 void patch_game(void) {
   hook_addr(so_symbol(&crazytaxi_mod, "__cxa_guard_acquire"), (uintptr_t)&__cxa_guard_acquire);
   hook_addr(so_symbol(&crazytaxi_mod, "__cxa_guard_release"), (uintptr_t)&__cxa_guard_release);
@@ -920,6 +1009,11 @@ void patch_game(void) {
   // Restoring FILA as possible destination
   uint16_t instr = 0xE04F; // B #0xa2
   kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F8130), &instr, 2);
+  
+  // Restoring voicelines for cut contents
+  Voice_ShutUp = (void *)so_symbol(&crazytaxi_mod, "_Z12Voice_ShutUpi");
+  Voice_Request = (void *)so_symbol(&crazytaxi_mod, "_Z13Voice_RequestP13tagVOICEENTRYiii");
+  hook_addr(so_symbol(&crazytaxi_mod, "_Z20Chat_TellDestinationPv"), (uintptr_t)&Chat_TellDestination);
   
   // Restore Pizza Hut and FILA models
   hook_addr(so_symbol(&crazytaxi_mod, "_Z10MendNoDrawiRbfRiPf"), (uintptr_t)&ret0);
