@@ -14,6 +14,7 @@
 #include <psp2/appmgr.h>
 #include <psp2/apputil.h>
 #include <psp2/ctrl.h>
+#include <psp2/motion.h>
 #include <psp2/power.h>
 #include <psp2/rtc.h>
 #include <kubridge.h>
@@ -46,6 +47,8 @@
 #include "so_util.h"
 #include "jni_patch.h"
 #include "sha1.h"
+
+int pstv_mode = 0;
 
 int _newlib_heap_size_user = MEMORY_NEWLIB_MB * 1024 * 1024;
 
@@ -294,7 +297,7 @@ void putGameUI(float x, float y, float x_scale, float y_scale, float tex_x, floa
 }
 
 static void *g_GameCT = NULL;
-static int (* GameCT__Update)(void *GameCT);
+static int (*GameCT__Update)(void *GameCT);
 
 void taxi_game_update(void *a1) {
   GameCT__Update(g_GameCT);
@@ -788,7 +791,7 @@ LABEL_227:
         {
           if ( a1 == 213979264 )
           {
-            *a3 = 1;s_uShinobiDoor & 1;
+            *a3 = s_uShinobiDoor & 1;
             s_uShinobiDoor ^= 1u;
           }
           goto LABEL_278;
@@ -979,6 +982,33 @@ uint32_t Chat_TellDestination(int *a1) {
   return Voice_Request(voice_out, 2, 127);
 }
 
+uint64_t rumble_tick = 0;
+void StartRumble (void) {
+  if (!pstv_mode)
+    return;
+  SceCtrlActuator handle;
+  handle.small = 100;
+  handle.large = 100;
+  sceCtrlSetActuator(1, &handle);
+  rumble_tick = sceKernelGetProcessTimeWide();
+}
+
+void StopRumble (void) {
+  SceCtrlActuator handle;
+  handle.small = 0;
+  handle.large = 0;
+  sceCtrlSetActuator(1, &handle);
+  rumble_tick = 0;
+}
+
+int VibStart(int id, int strength) {
+  if (strength > 0)
+    StartRumble();
+  return 0;
+}
+
+//static int (*taxi_game_accelerometer)(float x, float y, float z);
+
 void patch_game(void) {
   hook_addr(so_symbol(&crazytaxi_mod, "__cxa_guard_acquire"), (uintptr_t)&__cxa_guard_acquire);
   hook_addr(so_symbol(&crazytaxi_mod, "__cxa_guard_release"), (uintptr_t)&__cxa_guard_release);
@@ -988,28 +1018,48 @@ void patch_game(void) {
 
   g_GameCT = (void *)so_symbol(&crazytaxi_mod, "g_GameCT");
   GameCT__Update = (void *)so_symbol(&crazytaxi_mod, "_ZN6GameCT6UpdateEv");
+  //taxi_game_accelerometer = (void *)so_symbol(&crazytaxi_mod, "_Z23taxi_game_accelerometerfff");
   hook_addr(so_symbol(&crazytaxi_mod, "_Z16taxi_game_updatev"), (uintptr_t)&taxi_game_update);
 
   // Nuke touch widgets
   nlSprPut = (void *)so_symbol(&crazytaxi_mod, "nlSprPut");
   hook_addr(so_symbol(&crazytaxi_mod, "_Z9putGameUIffffffff"), (uintptr_t)&putGameUI);
 
-  // Restore original location names
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F354C), &PizzaHutStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B4), &PizzaHutStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3564), &KFCStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35C4), &KFCStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3558), &FILAStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B8), &FILAStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F355C), &LeviStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35BC), &LeviStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3560), &TowerStr, 4);
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35C0), &TowerStr, 4);
-  
-  // Restoring FILA as possible destination
-  uint16_t instr = 0xE04F; // B #0xa2
-  kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F8130), &instr, 2);
-  
+  uint16_t src_instr = *(uint16_t *)(crazytaxi_mod.text_base + 0x001F8130);
+  if (src_instr == 0x9A15) {
+    // Restoring FILA as possible destination
+    uint16_t instr = 0xE04F; // b #0xa2
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F9300), &instr, 2);
+	
+    // Restore original location names
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F754C), &PizzaHutStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75B4), &PizzaHutStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F7564), &KFCStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75C4), &KFCStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F7558), &FILAStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75B8), &FILAStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F755C), &LeviStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75BC), &LeviStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F7560), &TowerStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75C0), &TowerStr, 4);
+  } else {
+    // Restoring FILA as possible destination
+	uint16_t instr = 0xE04F; // b #0xa2
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F8130), &instr, 2);
+	
+	// Restore original location names
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F354C), &PizzaHutStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B4), &PizzaHutStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3564), &KFCStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35C4), &KFCStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3558), &FILAStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B8), &FILAStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F355C), &LeviStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35BC), &LeviStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3560), &TowerStr, 4);
+    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35C0), &TowerStr, 4);
+  }
+
   // Restoring voicelines for cut contents
   Voice_ShutUp = (void *)so_symbol(&crazytaxi_mod, "_Z12Voice_ShutUpi");
   Voice_Request = (void *)so_symbol(&crazytaxi_mod, "_Z13Voice_RequestP13tagVOICEENTRYiii");
@@ -1026,6 +1076,9 @@ void patch_game(void) {
   
   // Fix Pizza Hut text not showing up
   hook_addr(so_symbol(&crazytaxi_mod, "_Z15MendChangeZBiasiPiRi"), (uintptr_t)&MendChangeZBias);
+  
+  // Add vibration support for PSTV
+  hook_addr(so_symbol(&crazytaxi_mod, "_ZN11GuiJoystick8VibStartEii"), (uintptr_t)&VibStart);
 }
 
 extern void *__cxa_atexit;
@@ -1571,11 +1624,14 @@ int main(int argc, char *argv[]) {
   sceAppUtilInit(&init_param, &boot_param);
 
   sceCtrlSetSamplingModeExt(SCE_CTRL_MODE_ANALOG_WIDE);
+  //sceMotionStartSampling();
 
   scePowerSetArmClockFrequency(444);
   scePowerSetBusClockFrequency(222);
   scePowerSetGpuClockFrequency(222);
   scePowerSetGpuXbarClockFrequency(166);
+  
+  pstv_mode = sceKernelGetModel() == 0x20000 ? 1 : 0;
 
   if (check_kubridge() < 0)
     fatal_error("Error kubridge.skprx is not installed.");
@@ -1632,9 +1688,18 @@ int main(int argc, char *argv[]) {
       if (changed_buttons & mapping[i].sce_button)
         Java_com_sega_CrazyTaxi_GL2JNILib_onJoyButton(fake_env, NULL, mapping[i].android_button, !!(cur_buttons & mapping[i].sce_button), 1);
     }
+	
+    //SceMotionSensorState sensor;
+    //sceMotionGetSensorState(&sensor, 1);
+    //taxi_game_accelerometer(sensor.accelerometer.x, sensor.accelerometer.y, sensor.accelerometer.z);
 
     Java_com_sega_CrazyTaxi_GL2JNILib_step();
     vglSwapBuffers(GL_FALSE);
+	
+    // Handling vibration
+    if (rumble_tick != 0) {
+      if (sceKernelGetProcessTimeWide() - rumble_tick > 500000) StopRumble(); // 0.5 sec
+    }
   }
 
   return 0;
