@@ -325,7 +325,7 @@ int MendChangeZBias(int a1, int *a2, int *a3) {
   int s_uShinobiDoor = *(int *)(crazytaxi_mod.text_base + 0x007DE664);
   
   // Fix for Pizza Hut text not showing
-  if (a1== 0xCC0B3A0 || a1 == 0xCBFDF60) {
+  if (a1 == 0xCC0B3A0 || a1 == 0xCBFDF60) {
     v5 = *a3 + 9;
     goto LABEL_277;
   }
@@ -1030,7 +1030,7 @@ void patch_game(void) {
     // Restoring FILA as possible destination
     uint16_t instr = 0xE04F; // b #0xa2
     kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F9300), &instr, 2);
-	
+
     // Restore original location names
     kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F754C), &PizzaHutStr, 4);
     kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75B4), &PizzaHutStr, 4);
@@ -1044,10 +1044,10 @@ void patch_game(void) {
     kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75C0), &TowerStr, 4);
   } else {
     // Restoring FILA as possible destination
-	uint16_t instr = 0xE04F; // b #0xa2
+    uint16_t instr = 0xE04F; // b #0xa2
     kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F8130), &instr, 2);
-	
-	// Restore original location names
+
+    // Restore original location names
     kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F354C), &PizzaHutStr, 4);
     kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B4), &PizzaHutStr, 4);
     kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3564), &KFCStr, 4);
@@ -1688,14 +1688,14 @@ int main(int argc, char *argv[]) {
       if (changed_buttons & mapping[i].sce_button)
         Java_com_sega_CrazyTaxi_GL2JNILib_onJoyButton(fake_env, NULL, mapping[i].android_button, !!(cur_buttons & mapping[i].sce_button), 1);
     }
-	
+
     //SceMotionSensorState sensor;
     //sceMotionGetSensorState(&sensor, 1);
     //taxi_game_accelerometer(sensor.accelerometer.x, sensor.accelerometer.y, sensor.accelerometer.z);
 
     Java_com_sega_CrazyTaxi_GL2JNILib_step();
     vglSwapBuffers(GL_FALSE);
-	
+
     // Handling vibration
     if (rumble_tick != 0) {
       if (sceKernelGetProcessTimeWide() - rumble_tick > 500000) StopRumble(); // 0.5 sec
