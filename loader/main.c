@@ -1631,7 +1631,7 @@ int main(int argc, char *argv[]) {
   scePowerSetGpuClockFrequency(222);
   scePowerSetGpuXbarClockFrequency(166);
   
-  pstv_mode = sceKernelGetModel() == 0x20000 ? 1 : 0;
+  pstv_mode = sceCtrlIsMultiControllerSupported() ? 1 : 0;
 
   if (check_kubridge() < 0)
     fatal_error("Error kubridge.skprx is not installed.");
