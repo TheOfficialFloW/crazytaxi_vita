@@ -1076,6 +1076,8 @@ extern void *__strlen_chk;
 extern void *__strrchr_chk;
 extern void *__vsnprintf_chk;
 extern void *__vsprintf_chk;
+extern void *strtoumax;
+extern void *strtoimax;
 
 static char *__ctype_ = (char *)&_ctype_;
 
@@ -1536,7 +1538,8 @@ static so_default_dynlib default_dynlib[] = {
   { "strspn", (uintptr_t)&strspn },
   { "strstr", (uintptr_t)&strstr },
   { "strtod", (uintptr_t)&strtod },
-  // { "strtoimax", (uintptr_t)&strtoimax },
+  { "strtoimax", (uintptr_t)&strtoimax },
+  { "strtoumax", (uintptr_t)&strtoumax },
   { "strtol", (uintptr_t)&strtol },
   { "strtoll", (uintptr_t)&strtoll },
   { "strtoul", (uintptr_t)&strtoul },

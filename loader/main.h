@@ -9,6 +9,6 @@ int debugPrintf(char *text, ...);
 
 int ret0(void);
 
-SceUID _vshKernelSearchModuleByName(const char *, int *);
+SceUID _vshKernelSearchModuleByName(const char *, const void *);
 
 #endif
