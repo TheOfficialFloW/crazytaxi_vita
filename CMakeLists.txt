@@ -15,7 +15,7 @@ set(VITA_TITLEID  "CRAZYTAXI")
 set(VITA_VERSION  "01.00")
 set(VITA_MKSFOEX_FLAGS "-d ATTRIBUTE2=12")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wl,-q,--wrap,memcpy,--wrap,memmove,--wrap,memset -D_GNU_SOURCE -Wall -O3 -mfloat-abi=softfp")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wl,-q,--wrap,memcpy,--wrap,memmove,--wrap,memset,--allow-multiple-definition -fdiagnostics-color=always -D_GNU_SOURCE -Wall -O3 -mfloat-abi=softfp")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++11")
 
 add_executable(CRAZYTAXI.elf
@@ -30,10 +30,16 @@ target_link_libraries(CRAZYTAXI.elf
   -Wl,--whole-archive pthread -Wl,--no-whole-archive
   stdc++
   sndfile
+  vorbis
+  vorbisenc
+  vorbisfile
+  ogg
+  FLAC
   OpenSLES
   openal
   vitaGL
   vitashark
+  SceShaccCgExt
   m
   mathneon
   taihen_stub

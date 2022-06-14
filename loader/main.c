@@ -1015,7 +1015,7 @@ void patch_game(void) {
 
   hook_addr(so_symbol(&crazytaxi_mod, "_ZNSt6__ndk113random_deviceC2ERKNS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE"), (uintptr_t)&ret0);
   hook_addr(so_symbol(&crazytaxi_mod, "_ZNSt6__ndk113random_deviceD2Ev"), (uintptr_t)&ret0);
-
+  
   g_GameCT = (void *)so_symbol(&crazytaxi_mod, "g_GameCT");
   GameCT__Update = (void *)so_symbol(&crazytaxi_mod, "_ZN6GameCT6UpdateEv");
   //taxi_game_accelerometer = (void *)so_symbol(&crazytaxi_mod, "_Z23taxi_game_accelerometerfff");
@@ -1025,40 +1025,23 @@ void patch_game(void) {
   nlSprPut = (void *)so_symbol(&crazytaxi_mod, "nlSprPut");
   hook_addr(so_symbol(&crazytaxi_mod, "_Z9putGameUIffffffff"), (uintptr_t)&putGameUI);
 
-  uint16_t src_instr = *(uint16_t *)(crazytaxi_mod.text_base + 0x001F8130);
-  if (src_instr == 0x9A15) {
-    // Restoring FILA as possible destination
-    uint16_t instr = 0xE04F; // b #0xa2
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F9300), &instr, 2);
-
-    // Restore original location names
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F754C), &PizzaHutStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75B4), &PizzaHutStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F7564), &KFCStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75C4), &KFCStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F7558), &FILAStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75B8), &FILAStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F755C), &LeviStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75BC), &LeviStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F7560), &TowerStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F75C0), &TowerStr, 4);
-  } else {
-    // Restoring FILA as possible destination
-    uint16_t instr = 0xE04F; // b #0xa2
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x001F8130), &instr, 2);
-
-    // Restore original location names
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F354C), &PizzaHutStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B4), &PizzaHutStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3564), &KFCStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35C4), &KFCStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3558), &FILAStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35B8), &FILAStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F355C), &LeviStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35BC), &LeviStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F3560), &TowerStr, 4);
-    kuKernelCpuUnrestrictedMemcpy((void *)(crazytaxi_mod.text_base + 0x006F35C0), &TowerStr, 4);
-  }
+  // Restore original location names
+  uint8_t *LandmarksPtrs = (uint8_t *)so_symbol(&crazytaxi_mod, "LandmarkID");
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x24), &PizzaHutStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x8C), &PizzaHutStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x3C), &KFCStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x9C), &KFCStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x30), &FILAStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x90), &FILAStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x34), &LeviStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x94), &LeviStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x38), &TowerStr, 4);
+  kuKernelCpuUnrestrictedMemcpy((void *)(LandmarksPtrs + 0x98), &TowerStr, 4);
+  
+  // Restoring FILA as possible destination
+  uint8_t *exec_KyakuMain = (uint8_t *)so_symbol(&crazytaxi_mod, "_Z14exec_KyakuMainv");
+  uint16_t instr = 0xE04F; // b #0xa2
+  kuKernelCpuUnrestrictedMemcpy((void *)(exec_KyakuMain + 0x3A0), &instr, 2);
 
   // Restoring voicelines for cut contents
   Voice_ShutUp = (void *)so_symbol(&crazytaxi_mod, "_Z12Voice_ShutUpi");
@@ -1263,9 +1246,13 @@ static so_default_dynlib default_dynlib[] = {
   { "_tolower_tab_", (uintptr_t)&_tolower_tab_ },
   { "abort", (uintptr_t)&abort },
   // { "accept", (uintptr_t)&accept },
+  { "acos", (uintptr_t)&acos },
   { "acosf", (uintptr_t)&acosf },
+  { "asin", (uintptr_t)&asin },
+  { "atan", (uintptr_t)&atan },
   { "atan2f", (uintptr_t)&atan2f },
   { "atanf", (uintptr_t)&atanf },
+  { "atof", (uintptr_t)&atof },
   { "atoi", (uintptr_t)&atoi },
   { "atoll", (uintptr_t)&atoll },
   // { "bind", (uintptr_t)&bind },
@@ -1278,6 +1265,7 @@ static so_default_dynlib default_dynlib[] = {
   // { "close", (uintptr_t)&close },
   // { "closedir", (uintptr_t)&closedir },
   // { "connect", (uintptr_t)&connect },
+  { "cos", (uintptr_t)&cos },
   { "cosf", (uintptr_t)&cosf },
   // { "dladdr", (uintptr_t)&dladdr },
   // { "dlclose", (uintptr_t)&dlclose },
@@ -1377,6 +1365,7 @@ static so_default_dynlib default_dynlib[] = {
   { "glGetString", (uintptr_t)&glGetStringHook },
   { "glGetUniformLocation", (uintptr_t)&glGetUniformLocation },
   { "glLinkProgram", (uintptr_t)&glLinkProgram },
+  { "glReadPixels", (uintptr_t)&glReadPixels },
   { "glRenderbufferStorage", (uintptr_t)&ret0 },
   { "glScissor", (uintptr_t)&glScissor },
   { "glShaderSource", (uintptr_t)&glShaderSourceHook },
@@ -1425,12 +1414,18 @@ static so_default_dynlib default_dynlib[] = {
   // { "listen", (uintptr_t)&listen },
   { "localtime", (uintptr_t)&localtime },
   { "localtime_r", (uintptr_t)&localtime_r },
+  { "log", (uintptr_t)&log },
+  { "logf", (uintptr_t)&logf },
+  { "log10", (uintptr_t)&log10 },
   { "log10f", (uintptr_t)&log10f },
   { "lrand48", (uintptr_t)&lrand48 },
   { "lseek", (uintptr_t)&lseek },
   { "malloc", (uintptr_t)&malloc },
   { "mbrlen", (uintptr_t)&mbrlen },
+  { "mbtowc", (uintptr_t)&mbtowc },
+  { "mbrtowc", (uintptr_t)&mbrtowc },
   { "mbstowcs", (uintptr_t)&mbstowcs },
+  { "mbsnrtowcs", (uintptr_t)&mbsnrtowcs },
   { "memalign", (uintptr_t)&memalign },
   { "memchr", (uintptr_t)&memchr },
   { "memcmp", (uintptr_t)&memcmp },
@@ -1446,6 +1441,7 @@ static so_default_dynlib default_dynlib[] = {
   // { "mprotect", (uintptr_t)&mprotect },
   // { "munmap", (uintptr_t)&munmap },
   // { "nanosleep", (uintptr_t)&nanosleep },
+  { "newlocale", (uintptr_t)&ret0 },
   // { "open", (uintptr_t)&open },
   // { "opendir", (uintptr_t)&opendir },
   { "perror", (uintptr_t)&perror },
@@ -1486,6 +1482,7 @@ static so_default_dynlib default_dynlib[] = {
   { "pthread_setspecific", (uintptr_t)&pthread_setspecific },
   { "puts", (uintptr_t)&puts },
   { "qsort", (uintptr_t)&qsort },
+  { "rand", (uintptr_t)&rand },
   { "raise", (uintptr_t)&raise },
   // { "read", (uintptr_t)&read },
   // { "readdir", (uintptr_t)&readdir },
@@ -1510,11 +1507,13 @@ static so_default_dynlib default_dynlib[] = {
   // { "sigprocmask", (uintptr_t)&sigprocmask },
   { "sincos", (uintptr_t)&sincos },
   { "sincosf", (uintptr_t)&sincosf },
+  { "sin", (uintptr_t)&sin },
   { "sinf", (uintptr_t)&sinf },
   { "slCreateEngine", (uintptr_t)&slCreateEngine },
   { "snprintf", (uintptr_t)&snprintf },
   // { "socket", (uintptr_t)&socket },
   { "sprintf", (uintptr_t)&sprintf },
+  { "srand", (uintptr_t)&srand },
   { "srand48", (uintptr_t)&srand48 },
   { "sscanf", (uintptr_t)&sscanf },
   // { "stat", (uintptr_t)&stat },
@@ -1549,6 +1548,7 @@ static so_default_dynlib default_dynlib[] = {
   { "sysinfo", (uintptr_t)&sysinfo_fake },
   // { "syslog", (uintptr_t)&syslog },
   // { "system", (uintptr_t)&system },
+  { "tan", (uintptr_t)&tan },
   { "tanf", (uintptr_t)&tanf },
   { "time", (uintptr_t)&time },
   { "tolower", (uintptr_t)&tolower },
@@ -1564,10 +1564,24 @@ static so_default_dynlib default_dynlib[] = {
   { "vsprintf", (uintptr_t)&vsprintf },
   { "vsscanf", (uintptr_t)&vsscanf },
   { "wcscoll", (uintptr_t)&wcscoll },
+  { "wcscat", (uintptr_t)&wcscat },
   { "wcscpy", (uintptr_t)&wcscpy },
+  { "wcslen", (uintptr_t)&wcslen },
+  { "wcrtomb", (uintptr_t)&wcrtomb },
   { "wcstombs", (uintptr_t)&wcstombs },
+  { "wcstoul", (uintptr_t)&wcstoul },
+  { "wcstoull", (uintptr_t)&wcstoull },
+  { "wcstol", (uintptr_t)&wcstol },
+  { "wcstoll", (uintptr_t)&wcstoll },
   { "wcsxfrm", (uintptr_t)&wcsxfrm },
   { "wctob", (uintptr_t)&wctob },
+  { "wcstof", (uintptr_t)&wcstof },
+  { "wcstod", (uintptr_t)&wcstod },
+  { "wmemchr", (uintptr_t)&wmemchr },
+  { "wmemcmp", (uintptr_t)&wmemcmp },
+  { "wmemcpy", (uintptr_t)&wmemcpy },
+  { "wmemmove", (uintptr_t)&wmemmove },
+  { "wmemset", (uintptr_t)&wmemset },
   // { "write", (uintptr_t)&write },
 };
 
@@ -1616,6 +1630,8 @@ static ButtonMapping mapping[] = {
   { SCE_CTRL_SELECT,    AKEYCODE_BUTTON_SELECT },
 };
 
+int vgl_inited = 0;
+
 int main(int argc, char *argv[]) {
   SceAppUtilInitParam init_param;
   SceAppUtilBootParam boot_param;
@@ -1639,7 +1655,7 @@ int main(int argc, char *argv[]) {
   if (!file_exists("ur0:/data/libshacccg.suprx") && !file_exists("ur0:/data/external/libshacccg.suprx"))
     fatal_error("Error libshacccg.suprx is not installed.");
 
-  if (so_load(&crazytaxi_mod, DATA_PATH "/libgl2jni.so", LOAD_ADDRESS) < 0)
+  if (so_file_load(&crazytaxi_mod, DATA_PATH "/libgl2jni.so", LOAD_ADDRESS) < 0)
     fatal_error("Error could not load %s.", DATA_PATH "/libgl2jni.so");
   so_relocate(&crazytaxi_mod);
   so_resolve(&crazytaxi_mod, default_dynlib, sizeof(default_dynlib), 0);
@@ -1651,6 +1667,7 @@ int main(int argc, char *argv[]) {
 
   vglSetupRuntimeShaderCompiler(SHARK_OPT_UNSAFE, SHARK_ENABLE, SHARK_ENABLE, SHARK_ENABLE);
   vglInitExtended(0, SCREEN_W, SCREEN_H, MEMORY_VITAGL_THRESHOLD_MB * 1024 * 1024, SCE_GXM_MULTISAMPLE_4X);
+  vgl_inited = 1;
 
   jni_load();
 

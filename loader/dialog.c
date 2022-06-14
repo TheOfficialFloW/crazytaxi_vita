@@ -18,6 +18,8 @@
 #include "main.h"
 #include "dialog.h"
 
+extern int vgl_inited;
+
 static uint16_t ime_title_utf16[SCE_IME_DIALOG_MAX_TITLE_LENGTH];
 static uint16_t ime_initial_text_utf16[SCE_IME_DIALOG_MAX_TEXT_LENGTH];
 static uint16_t ime_input_text_utf16[SCE_IME_DIALOG_MAX_TEXT_LENGTH + 1];
@@ -131,8 +133,9 @@ void fatal_error(const char *fmt, ...) {
   va_start(list, fmt);
   vsnprintf(string, sizeof(string), fmt, list);
   va_end(list);
-
-  vglInit(0);
+  
+  if (!vgl_inited)
+    vglInit(0);
 
   init_msg_dialog(string);
 
